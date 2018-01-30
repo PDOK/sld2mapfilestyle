@@ -1,0 +1,3 @@
+# Naam GPKG, laagnaam GPKG, stijlnaam SLD, geometrietype (point, line, area)
+nwbwegen.gpkg,wegvakken,wegvakken,line
+nwbwegen.gpkg,hectopunten,hectopunten_met_labels hectopunten,point
