@@ -3,6 +3,8 @@ import re
 import subprocess
 import sys
 
+import lxml.etree as ET
+
 
 def getMinMaxScaleDenoms(classesList):
 
@@ -55,6 +57,14 @@ def getClassitem(classes):
 			return line.strip().split()[1]
 			
 	return None
+	
+	
+def executeXslt(xsl_filename, xml_filename):
+	dom = ET.parse(xml_filename)
+	xslt = ET.parse(xsl_filename)
+	transform = ET.XSLT(xslt)
+	newdom = transform(dom)
+	return str(newdom)
 
 
 if __name__ == "__main__":
@@ -114,7 +124,8 @@ if __name__ == "__main__":
 			styleList = styles.split()
 			try:
 				for style in styleList:
-					classesList.append(subprocess.check_output('xml tr sld2map.xslt %s\\%s.sld' % (sldDir, style)).replace('\r\n','\n'))
+					result = executeXslt('sld2map.xslt', '%s\\%s.sld' % (sldDir, style))
+					classesList.append(result)
 			except subprocess.CalledProcessError, e:
 				print "Ping stdout output:\n", e.output
 				exit(1)
@@ -198,7 +209,8 @@ if __name__ == "__main__":
 			print ''
 			
 			for style in styleList:
-				namedStyles = subprocess.check_output('xml tr sld2namedStyles.xslt %s\\%s.sld' % (sldDir, style)).replace('\r\n','\n')
+				namedStyles = executeXslt('sld2namedStyles.xslt', '%s\\%s.sld' % (sldDir, style))
+				
 				if len(namedStyles) > 0:
 					print namedStyles.strip('\n')
 					print ''
