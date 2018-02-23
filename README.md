@@ -17,3 +17,5 @@ Parameters:
 Met de Python-code wordt de Mapfile gemaakt. Er wordt gebruik gemaakt van een tweetal XSLT's om onderdelen van de stijl te genereren. Er is hiervoor gekozen, omdat de SLD's een complexe structuur hebben en het zelf parsen hiervan veel werk zou zijn.
 
 De conversie-applicatie is een work in progress. Het doel is uiteindelijk om het omzetten van de Geoserver-configuratie (met name de stijlen) naar Mapserver te vergemakkelijken. Gebruiksvriendelijkheid was nooit een doel op zich <img src="https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/118/smiling-face-with-halo_1f607.png" width="16" height="16">.
+
+In de voorbeelden-directory is een aantal voorbeelden te zien van de BRT Achtergrondkaart, CBS Gebiedsindelingen en NWB wegen. Alleen NWB Wegen wordt momenteel in productie geserveerd via Mapserver. Per dataset is de directory met SLD's te zien (gekopieerd vanuit de Geoserver-configuratie), het CSV-bestand met meta-informatie en de uiteindelijke Mapfile.
