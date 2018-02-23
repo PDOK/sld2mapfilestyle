@@ -5,7 +5,7 @@ Met dit project kan een set SLD-bestanden worden omgezet naar een Mapserver-conf
 Met het Python-script kan een directory met SLD's a.d.h.v. een metabestand (CSV) worden omgezet naar een Mapfile. Benodigdheden:
 
 * [Python 2.7](https://www.python.org/downloads/windows/)
-* [XML Starlet](http://xmlstar.sourceforge.net/)
+* [lxml](http://lxml.de/installation.html) -> voor Windows zie (buiten proxy): https://www.lfd.uci.edu/~gohlke/pythonlibs/
 
 Aanroep: `python sld2basemap.py <CSV-file> <SLD-dir> [<Title>]`
 
