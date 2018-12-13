@@ -66,6 +66,19 @@
 			<xsl:with-param name="suffix" select="'&quot;'"/>
 		</xsl:call-template>
 	</xsl:template>
+
+	<xsl:template name="outputElemValueSymbol">
+		<xsl:param name="name"/>
+		<xsl:param name="prefix"/>
+		<xsl:param name="suffix" select="''"/>
+	
+		<xsl:call-template name="outputValue">
+			<xsl:with-param name="value" select="$name"/>
+			<xsl:with-param name="prefix" select="$prefix"/>
+			<xsl:with-param name="suffix" select="$suffix"/>
+	</xsl:call-template>
+	
+	</xsl:template>
 	
 	<xsl:template name="outputLineJoin">
 		<xsl:param name="elem"/>
@@ -309,11 +322,14 @@
 						
 						<!-- Symbol properties -->
 						<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
-						<xsl:call-template name="outputElemValue">
-							<xsl:with-param name="elem" select="../../../se:Name"/>
-							<xsl:with-param name="prefix" select="'        SYMBOL &quot;'"/>
-							<xsl:with-param name="suffix" select="concat('-', $increment, '&quot;')"/>
+						<xsl:variable name="layername" select="/sld:StyledLayerDescriptor/sld:NamedLayer/se:Name/text()"/>
+						<xsl:variable name="symbolname" select="../../../se:Name/text()"/>
+						<xsl:call-template name="outputElemValueSymbol">
+							<xsl:with-param name="name" select="concat($layername, ':', $symbolname)"/>
+							<xsl:with-param name="prefix" select="'    NAME &quot;'"/>
+							<xsl:with-param name="suffix" select="concat('-', position(), '&quot;')"/>
 						</xsl:call-template>
+
 						<xsl:call-template name="outputElemValue">
 							<xsl:with-param name="elem" select="../se:Size"/>
 							<xsl:with-param name="prefix" select="'        SIZE '"/>

@@ -52,7 +52,7 @@
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template name="outputElemValue2">
+	<xsl:template name="outputElemValueSymbol">
 		<xsl:param name="name"/>
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
@@ -93,14 +93,11 @@
 	<xsl:template match="/sld:StyledLayerDescriptor">
 		<xsl:for-each select=".//se:PointSymbolizer/se:Graphic/se:Mark|.//se:TextSymbolizer/se:Graphic/se:Mark">
 			<xsl:text>  SYMBOL&#xa;</xsl:text>
-			
-			<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
+
 			<xsl:variable name="layername" select="/sld:StyledLayerDescriptor/sld:NamedLayer/se:Name/text()"/>
 			<xsl:variable name="symbolname" select="../../../se:Name/text()"/>
-			<!-- <xsl:variable name="layersymbol" select="concat($layername, $symbolname)"/>  -->
-
-			<xsl:call-template name="outputElemValue2">
-				<xsl:with-param name="name" select="concat($layername, $symbolname)"/>
+			<xsl:call-template name="outputElemValueSymbol">
+				<xsl:with-param name="name" select="concat($layername, ':', $symbolname)"/>
 				<xsl:with-param name="prefix" select="'    NAME &quot;'"/>
 				<xsl:with-param name="suffix" select="concat('-', position(), '&quot;')"/>
 			</xsl:call-template>

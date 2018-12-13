@@ -182,10 +182,22 @@
 	<xsl:template name="outputStroke">
 		<xsl:param name="outlinePrefix" select="''"/>
 		
-		<xsl:call-template name="outputElemValueWithQuotes">
-			<xsl:with-param name="elem" select="sld:Stroke/sld:CssParameter[@name='stroke']"/>
-			<xsl:with-param name="prefix" select="concat('        ', $outlinePrefix, 'COLOR ')"/>
-		</xsl:call-template>
+		<xsl:choose>
+ 			<xsl:when test="sld:Stroke/sld:CssParameter[@name='stroke']">
+					<xsl:call-template name="outputElemValueWithQuotes">
+						<xsl:with-param name="elem" select="sld:Stroke/sld:CssParameter[@name='stroke']"/>
+						<xsl:with-param name="prefix" select="concat('        ', $outlinePrefix, 'COLOR')"/>
+					</xsl:call-template>	 
+			 </xsl:when>
+			 <xsl:otherwise>
+				<xsl:call-template name="outputValue">
+					<xsl:with-param name="value" select="'0 0 0'"/>
+					<xsl:with-param name="prefix" select="concat('        ', $outlinePrefix, 'COLOR ')"/>
+				</xsl:call-template>
+			</xsl:otherwise>
+		</xsl:choose>
+
+		
 		<xsl:call-template name="outputElemValue">
 			<xsl:with-param name="elem" select="sld:Stroke/sld:CssParameter[@name='stroke-width']"/>
 			<xsl:with-param name="prefix" select="concat('        ', $outlinePrefix, 'WIDTH ')"/>
