@@ -19,3 +19,22 @@ Met de Python-code wordt de Mapfile gemaakt. Er wordt gebruik gemaakt van een tw
 De conversie-applicatie is een work in progress. Het doel is uiteindelijk om het omzetten van de Geoserver-configuratie (met name de stijlen) naar Mapserver te vergemakkelijken. Gebruiksvriendelijkheid was nooit een doel op zich <img src="https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/118/smiling-face-with-halo_1f607.png" width="16" height="16">.
 
 In de voorbeelden-directory is een aantal voorbeelden te zien van de BRT Achtergrondkaart, CBS Gebiedsindelingen en NWB wegen. Alleen NWB Wegen wordt momenteel in productie geserveerd via Mapserver. Per dataset is de directory met SLD's te zien (gekopieerd vanuit de Geoserver-configuratie), het CSV-bestand met meta-informatie en de uiteindelijke Mapfile.
+
+
+## Debug in VS Code
+
+
+Add this launch configuration to `.vscode/launch.json`:
+```
+ {
+    "name": "convert-sld-command",
+    "type": "python",
+    "request": "launch",
+    "module": "sld2mapfilestyle.sld2mapfilestyle",
+    "args": [
+        "convert-sld",
+        "tests/sld/cbs_inwoners/cbs_pc4_aantal_inwoners.sld",
+        "data/"
+    ]
+}
+```

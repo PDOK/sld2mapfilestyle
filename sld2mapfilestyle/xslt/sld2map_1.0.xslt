@@ -16,6 +16,7 @@
 		<xsl:param name="value"/>
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
+		<xsl:param name="defaultValue" select="''"/>
 		
 		<xsl:value-of select="concat($prefix, normalize-space($value), $suffix, '&#xa;')"/>
 	</xsl:template>
@@ -35,7 +36,7 @@
 		<xsl:param name="elem"/>
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
-		<xsl:param name="defaultValue"/>
+		<xsl:param name="defaultValue" select="''"/>
 		
 		<xsl:if test="$elem[1]">
 			<xsl:call-template name="outputValue">
@@ -316,12 +317,17 @@
 					<xsl:for-each select="sld:Graphic/sld:Mark">
 						<xsl:text>      STYLE&#xa;</xsl:text>
 						
+						<xsl:variable name="chapNum">
+    						<xsl:number level="any"/>
+	  					</xsl:variable>
+
 						<!-- Symbol properties -->
 						<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
 						<xsl:call-template name="outputElemValue">
 							<xsl:with-param name="elem" select="../../../../../sld:Title"/>
 							<xsl:with-param name="prefix" select="'        SYMBOL &quot;'"/>
-							<xsl:with-param name="suffix" select="concat('-', position(), '&quot;')"/>
+							<xsl:with-param name="suffix" select="concat('-', $chapNum, '&quot;')"/>
+								
 						</xsl:call-template>
 						<xsl:call-template name="outputElemValue">
 							<xsl:with-param name="elem" select="../sld:Size"/>
@@ -424,10 +430,197 @@
 			<xsl:text>    END&#xa;</xsl:text>
 		</xsl:if>
 	
-	</xsl:template>
+	</xsl:template> <!-- outputClasses-->
+
+	<xsl:template name="outputClassesBin">
+		<xsl:param name="className"/>
+		<xsl:param name="upperValue"/>
+		<xsl:param name="lowerValue"/>
+		<xsl:param name="lowerProperty"/>
+		<xsl:param name="upperProperty"/>
+
+			<xsl:text>    CLASS&#xa;</xsl:text>
+
+			<!-- Use the name of the first rule -->
+			<xsl:call-template name="outputElemValueWithQuotes">
+				<xsl:with-param name="elem" select="$className"/>
+				<xsl:with-param name="prefix" select="'      NAME '"/>
+			</xsl:call-template>
+			
+			<xsl:call-template name="outputValue">
+				<xsl:with-param name="value" select="concat('(', '[', $lowerProperty, ']', ' ge ', $lowerValue, ' AND ', '[', $upperProperty, ']', ' le ', $upperValue, ')')"/>
+				<xsl:with-param name="prefix" select="'      EXPRESSION '"/>
+			</xsl:call-template>
+
+			<!-- <xsl:text>    CURRENT&#xa;</xsl:text>
+			<xsl:value-of select="current()"/>
+			<xsl:value-of select ="name(.)"/> -->
+
+			<xsl:for-each select="../../sld:LineSymbolizer">
+					<xsl:text>      STYLE&#xa;</xsl:text>
+					
+					<!-- Stroke -->
+					<xsl:call-template name="outputStroke" />
+					
+					<!-- Scale denominators -->
+					<xsl:call-template name="outputScaleDenominators">
+						<xsl:with-param name="rule" select=".."/>
+					</xsl:call-template>
+					
+					<xsl:text>      END&#xa;</xsl:text>
+					
+				</xsl:for-each>
+				
+				<xsl:for-each select="../../sld:PolygonSymbolizer">
+					<xsl:text>      STYLE&#xa;</xsl:text>
+					
+					<!-- Fill and stroke -->
+					<xsl:call-template name="outputFill" />
+					<xsl:call-template name="outputStroke">
+						<xsl:with-param name="outlinePrefix" select="'OUTLINE'"/>
+					</xsl:call-template>
+					
+					<!-- Scale denominators -->
+					<xsl:call-template name="outputScaleDenominators">
+						<xsl:with-param name="rule" select=".."/>
+					</xsl:call-template>
+					
+					<xsl:text>      END&#xa;</xsl:text>
+					
+				</xsl:for-each>
+				
+				<xsl:for-each select="../../sld:PointSymbolizer">
+					<xsl:for-each select="sld:Graphic/sld:Mark">
+						<xsl:text>      STYLE&#xa;</xsl:text>
+						
+						<xsl:variable name="chapNum">
+    						<xsl:number level="any"/>
+	  					</xsl:variable>
+
+						<!-- Symbol properties -->
+						<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
+						<xsl:call-template name="outputElemValue">
+							<xsl:with-param name="elem" select="../../../../../sld:Title"/>
+							<xsl:with-param name="prefix" select="'        SYMBOL &quot;'"/>
+							<xsl:with-param name="suffix" select="concat('-', $chapNum, '&quot;')"/>
+								
+						</xsl:call-template>
+						<xsl:call-template name="outputElemValue">
+							<xsl:with-param name="elem" select="../sld:Size"/>
+							<xsl:with-param name="prefix" select="'        SIZE '"/>
+						</xsl:call-template>
+						
+						<!-- Fill and stroke -->
+						<xsl:call-template name="outputFill" />
+						<xsl:call-template name="outputStroke">
+							<xsl:with-param name="outlinePrefix" select="'OUTLINE'"/>
+						</xsl:call-template>
+					
+						<!-- Scale denominators -->
+						<xsl:call-template name="outputScaleDenominators">
+							<xsl:with-param name="rule" select=".."/>
+						</xsl:call-template>
+						
+						<xsl:text>      END&#xa;</xsl:text>
+					</xsl:for-each>
+					
+				</xsl:for-each>
+				
+				<xsl:for-each select="../../sld:TextSymbolizer">
+					<xsl:text>      LABEL&#xa;</xsl:text>
+					
+					<!-- Fill -->
+					<xsl:call-template name="outputElemValueWithQuotes">
+						<xsl:with-param name="elem" select="sld:Fill/sld:CssParameter[@name='fill']"/>
+						<xsl:with-param name="prefix" select="'        COLOR '"/>
+					</xsl:call-template>
+					<!-- Beware: label contains no opacity! -->
+					
+					<!-- Label properties -->
+					<xsl:call-template name="outputFont">
+						<xsl:with-param name="elem" select="sld:Font"/>
+						<xsl:with-param name="prefix" select="'        FONT '"/>
+					</xsl:call-template>
+					<xsl:value-of select="'        TYPE truetype&#xa;'"/>
+					<xsl:call-template name="outputValue">
+						<xsl:with-param name="value" select="0.8 * sld:Font/sld:CssParameter[@name='font-size']/text()"/>
+						<xsl:with-param name="prefix" select="'        SIZE '"/>
+						<xsl:with-param name="defaultValue" select="10"/>
+					</xsl:call-template>
+					<xsl:call-template name="outputElemValue">
+						<xsl:with-param name="elem" select="sld:Label/ogc:PropertyName"/>
+						<xsl:with-param name="prefix" select="concat('        TEXT ', $apos, '[')"/>
+						<xsl:with-param name="suffix" select="concat(']', $apos)"/>
+					</xsl:call-template>
+					<xsl:call-template name="outputOffset">
+						<xsl:with-param name="elem" select="sld:LabelPlacement/sld:PointPlacement/sld:AnchorPoint"/>
+						<xsl:with-param name="fontSizeElem" select="sld:Font/sld:CssParameter[@name='font-size']"/>
+						<xsl:with-param name="prefix" select="'        OFFSET '"/>
+					</xsl:call-template>
+					<xsl:call-template name="outputElemValue">
+						<xsl:with-param name="elem" select="sld:LabelPlacement/sld:PointPlacement/sld:Rotation/ogc:Sub/ogc:PropertyName"/>
+						<xsl:with-param name="prefix" select="'        ANGLE ['"/>
+						<xsl:with-param name="suffix" select="']'"/>
+					</xsl:call-template>
+					
+					<xsl:if test="sld:LabelPlacement/sld:LinePlacement">
+						<xsl:value-of select="'        ANGLE FOLLOW&#xa;'"/>
+					</xsl:if>
+					
+					<xsl:for-each select="sld:Graphic/sld:Mark">
+						<xsl:text>        STYLE&#xa;</xsl:text>
+						
+						<!-- Symbol properties -->
+						<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
+						<!--xsl:call-template name="outputElemValue">
+							<xsl:with-param name="elem" select="../../../../../sld:Title"/>
+							<xsl:with-param name="prefix" select="'          SYMBOL &quot;'"/>
+							<xsl:with-param name="suffix" select="concat('-', position(), '&quot;')"/>
+						</xsl:call-template>
+						<xsl:call-template name="outputElemValue">
+							<xsl:with-param name="elem" select="../sld:Size"/>
+							<xsl:with-param name="prefix" select="'          SIZE '"/>
+						</xsl:call-template-->
+						
+						<xsl:text>          GEOMTRANSFORM labelpoly&#xa;</xsl:text>
+						
+						<!-- Fill and stroke -->
+						<xsl:call-template name="outputFill" />
+						<xsl:call-template name="outputStroke">
+							<xsl:with-param name="outlinePrefix" select="'OUTLINE'"/>
+						</xsl:call-template>
+						
+						<xsl:text>        END&#xa;</xsl:text>
+					</xsl:for-each>
+					
+					<!-- Scale denominators -->
+					<xsl:call-template name="outputScaleDenominators">
+						<xsl:with-param name="rule" select=".."/>
+					</xsl:call-template>
+					
+					<xsl:text>      END&#xa;</xsl:text>
+					
+				</xsl:for-each>
+			<xsl:text>    END&#xa;</xsl:text>
+		
+	
+	</xsl:template> <!-- outputClassesBin-->
 	
    	<!-- Start processing the templates -->
 	<xsl:template match="/sld:StyledLayerDescriptor">
+		
+		<xsl:if test="//ogc:Filter/ogc:And">
+			<xsl:for-each select="//ogc:Filter/ogc:And">
+				<xsl:call-template name="outputClassesBin">
+					<xsl:with-param name="className" select="../../sld:Title"/>
+					<xsl:with-param name="lowerValue" select="ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal/text()"/>
+					<xsl:with-param name="upperValue" select="ogc:PropertyIsLessThan/ogc:Literal/text()"/>
+					<xsl:with-param name="upperProperty" select="ogc:PropertyIsLessThan/ogc:PropertyName/text()"/>
+					<xsl:with-param name="lowerProperty" select="ogc:PropertyIsLessThan/ogc:PropertyName/text()"/>
+				</xsl:call-template>
+			</xsl:for-each>
+		</xsl:if>
+
 
 		<xsl:if test="//ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal">
 			<xsl:variable name="filterProperty" select="//ogc:Filter/ogc:PropertyIsEqualTo/ogc:PropertyName/text()"/>
@@ -441,7 +634,7 @@
 			</xsl:for-each>
 		</xsl:if>
 		
-		<xsl:if test="not(//ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal)">
+		<xsl:if test="not(//ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal) and not(//ogc:Filter/ogc:And/ogc:PropertyIsGreaterThanOrEqualTo|ogc:PropertyIsLessThan)">
 			<!-- No filters testing for equality, for example BRTA gebouwVlak_9_14 -->
 			<xsl:call-template name="outputClasses">
 				<!-- There should be only one rule in this case -->

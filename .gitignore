@@ -117,3 +117,4 @@ dmypy.json
 data/
 .vscode/
 output/
+.idea/

@@ -9,8 +9,10 @@ setup(
     author='Anton Bakker',
     author_email='anton.bakker@kadaster.nl',
     packages=['sld2mapfilestyle'],
-    include_package_data = True,
-    install_requires=[
-          'lxml',
-    ]
+    include_package_data=True,
+    install_requires=['lxml',],
+    entry_points='''
+        [console_scripts]
+        convert-sld=sld2mapfilestyle.sld2mapfilestyle:convert_sld_command
+    ''',
 )

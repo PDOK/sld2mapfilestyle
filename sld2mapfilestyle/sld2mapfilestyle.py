@@ -81,7 +81,7 @@ def execute_xslt(xsl_filename, xml_filename):
     xslt = ET.parse(xsl_path)
     transform = ET.XSLT(xslt)
     try:
-        newdom = transform(dom)    
+        newdom = transform(dom)
     except:
         print("Error occured while applying xsl tranformation {0} on file {1}".format(xsl_filename, xml_filename))
         for error in transform.error_log:
@@ -91,10 +91,10 @@ def execute_xslt(xsl_filename, xml_filename):
 
 
 def get_style_string(sld_file):
-    sb = stringbuilder.StringBuilder()
+    string_builder = stringbuilder.StringBuilder()
     classes_list = []
-    
-    result = execute_xslt('sld2map',  os.path.join(sld_file))
+    result = execute_xslt('sld2map', os.path.join(sld_file))
+    print(result)
     classes_list.append(result)
 
     # scale_denoms = get_minmax_scale_denoms(classes_list)
@@ -105,10 +105,10 @@ def get_style_string(sld_file):
     #     print('    MAXSCALEDENOM {:f}'.format(scaleDenoms['max'])) 
     # print('')
     style_name = get_style_name(sld_file)
-    sb.append('    CLASSGROUP "{0}"'.format(style_name))
+    string_builder.append('    CLASSGROUP "{0}"'.format(style_name))
     for c in classes_list:
-        sb.append(c.replace('{group-placeholder}', style_name))
-    return str(sb)
+        string_builder.append(c.replace('{group-placeholder}', style_name))
+    return str(string_builder)
 
 def get_symbol_string(sld_file):
     sb = stringbuilder.StringBuilder()
@@ -170,4 +170,3 @@ def convert_sld_command(sld_file, output_dir="", silent=True):
 if __name__ == "__main__":
     # pylint: disable=no-value-for-parameter
     cli()
-
