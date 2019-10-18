@@ -105,7 +105,6 @@ def get_style_string(sld_file):
     #     print('    MAXSCALEDENOM {:f}'.format(scaleDenoms['max'])) 
     # print('')
     style_name = get_style_name(sld_file)
-    string_builder.append('    CLASSGROUP "{0}"'.format(style_name))
     for c in classes_list:
         string_builder.append(c.replace('{group-placeholder}', style_name))
     return str(string_builder)
