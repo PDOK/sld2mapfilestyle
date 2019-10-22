@@ -535,7 +535,7 @@
 		<xsl:param name="className"/>
 		<xsl:param name="commonRules"/>
 
-		<xsl:if test="./ogc:And/ogc:PropertyIsGreaterThanOrEqualTo|ogc:PropertyIsLessThan">
+		<xsl:if test="ogc:And/ogc:PropertyIsGreaterThanOrEqualTo|ogc:And/ogc:PropertyIsLessThan">
 			<xsl:call-template name="outputClassesBin">
 				<xsl:with-param name="currentRule" select="$currentRule"/>
 				<xsl:with-param name="styleName" select="$styleName"/>
@@ -589,75 +589,17 @@
 			<xsl:with-param name="elem" select="$styleName"/>
 			<xsl:with-param name="prefix" select="'    CLASSGROUP '"/>
 		</xsl:call-template>
-
-		<!-- <ogc:Filter>
-			<ogc:PropertyIsBetween>
-				<ogc:PropertyName>basisonderwijs_aantal_binnen_1_km</ogc:PropertyName>
-				<ogc:LowerBoundary>
-					<ogc:Literal>0.0</ogc:Literal>
-				</ogc:LowerBoundary>
-				<ogc:UpperBoundary>
-					<ogc:Literal>0.05</ogc:Literal>
-				</ogc:UpperBoundary>
-			</ogc:PropertyIsBetween>
-		</ogc:Filter> -->
-		<!-- 
-<ogc:And>
-	<ogc:PropertyIsGreaterThanOrEqualTo>
-		<ogc:PropertyName>aantal_inwoners</ogc:PropertyName>
-		<ogc:Literal>1249.000001</ogc:Literal>
-	</ogc:PropertyIsGreaterThanOrEqualTo>
-	<ogc:PropertyIsLessThan>
-		<ogc:PropertyName>aantal_inwoners</ogc:PropertyName>
-		<ogc:Literal>2499.0</ogc:Literal>
-	</ogc:PropertyIsLessThan>
-</ogc:And> -->
-
+	
 		<xsl:if test="//ogc:Filter/ogc:And|//ogc:Filter/ogc:PropertyIsBetween|//ogc:Filter/ogc:PropertyIsGreaterThanOrEqualTo">
 			<xsl:for-each select="//ogc:Filter">
 				<xsl:call-template name="filter">
 					<xsl:with-param name="currentRule" select=".."/>
 					<xsl:with-param name="styleName" select="$styleName"/>
-					<xsl:with-param name="className" select="../../sld:Title"/>
+					<xsl:with-param name="className" select="../sld:Title"/>
 					<xsl:with-param name="commonRules" select="//sld:Rule[not(ogc:Filter)]"/>
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:if>
-
-		<!-- <xsl:if test="//ogc:Filter/ogc:And/ogc:PropertyIsGreaterThanOrEqualTo|ogc:PropertyIsLessThan|//ogc:Filter/ogc:PropertyIsBetween">
-	
-			<xsl:for-each select="//ogc:Filter/ogc:And">
-				<xsl:call-template name="outputClassesBin">
-					<xsl:with-param name="currentRule" select="../.."/>
-					<xsl:with-param name="styleName" select="$styleName"/>
-					<xsl:with-param name="className" select="../../sld:Title"/>
-					<xsl:with-param name="upperValue" select="ogc:PropertyIsLessThan/ogc:Literal/text()"/>
-					<xsl:with-param name="lowerValue" select="ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal/text()"/>
-					<xsl:with-param name="upperProperty" select="ogc:PropertyIsLessThan/ogc:PropertyName/text()"/>
-					<xsl:with-param name="lowerProperty" select="ogc:PropertyIsGreaterThanOrEqualTo/ogc:PropertyName/text()"/>
-					<xsl:with-param name="lowerOp" select="'ge'"/>
-					<xsl:with-param name="upperOp" select="'lt'"/>
-					<xsl:with-param name="commonRules" select="//sld:Rule[not(ogc:Filter)]"/>
-				</xsl:call-template>
-			</xsl:for-each>
-
-			<xsl:for-each select="//ogc:Filter/ogc:PropertyIsBetween">
-				<xsl:call-template name="outputClassesBin">
-					<xsl:with-param name="currentRule" select="../.."/>
-					<xsl:with-param name="styleName" select="$styleName"/>
-					<xsl:with-param name="className" select="../../sld:Title"/>
-					<xsl:with-param name="lowerValue" select="ogc:LowerBoundary/ogc:Literal/text()"/>
-					<xsl:with-param name="upperValue" select="ogc:UpperBoundary/ogc:Literal/text()"/>
-					<xsl:with-param name="upperProperty" select="ogc:PropertyName/text()"/>
-					<xsl:with-param name="lowerProperty" select="ogc:PropertyName/text()"/>
-					<xsl:with-param name="lowerOp" select="'ge'"/>
-					<xsl:with-param name="upperOp" select="'le'"/>
-					<xsl:with-param name="commonRules" select="//sld:Rule[not(ogc:Filter)]"/>
-				</xsl:call-template>
-			</xsl:for-each>
-
-		</xsl:if> -->
-
 
 		<xsl:if test="//ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal">
 			<xsl:variable name="filterProperty" select="//ogc:Filter/ogc:PropertyIsEqualTo/ogc:PropertyName/text()"/>
@@ -672,15 +614,21 @@
 			</xsl:for-each>
 		</xsl:if>
 
-		<!-- <xsl:if test="not(//ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal) and not(//ogc:Filter/ogc:And/ogc:PropertyIsGreaterThanOrEqualTo|ogc:PropertyIsLessThan) and not(//ogc:Filter/ogc:PropertyIsBetween)"> -->
-		<!-- <xsl:if test="//sld:Rule[not(sld:Filter)]"> -->
-		<!-- No filters testing for equality, for example BRTA gebouwVlak_9_14 -->
-		<!-- <xsl:call-template name="outputClasses"> -->
-		<!-- There should be only one rule in this case -->
-		<!-- <xsl:with-param name="rules" select="//sld:Rule"/>
-					<xsl:with-param name="styleName" select="$styleName"/>
-				</xsl:call-template> -->
-		<!-- </xsl:if> -->
+		<!-- Add class with common rules, so that unmatched features (not falling in any of the classes), get styled by the common rules as well -->
+		<xsl:text>    CLASS&#xa;</xsl:text>
+		<xsl:call-template name="outputElemValueWithQuotes">
+			<xsl:with-param name="elem" select="$styleName"/>
+			<xsl:with-param name="prefix" select="'      GROUP '"/>
+		</xsl:call-template>
+
+		<xsl:for-each select="//sld:Rule[not(ogc:Filter)]">
+			<xsl:variable name="currentRule" select="."/>
+			<xsl:call-template name="symbolizers">
+				<xsl:with-param name="currentRule" select="$currentRule"/>
+			</xsl:call-template>
+		</xsl:for-each>
+		<xsl:text>    END&#xa;</xsl:text>
+
 	</xsl:template>
 
 
