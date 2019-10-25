@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0"
+<xsl:stylesheet version="1.0" 
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xmlns:sld="http://www.opengis.net/sld" 
 	xmlns:ogc="http://www.opengis.net/ogc" 
-	xmlns:gml="http://www.opengis.net/gml" >
+	xmlns:gml="http://www.opengis.net/gml">
 	<xsl:output method="text"/>
 	<xsl:strip-space elements="*"/>
-
-	
-	
 
 	<xsl:key name="minScale" match="//sld:MinScaleDenominator/text()" use="." />
 	<xsl:key name="filterValue" match="//ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal/text()" use="." />
@@ -20,7 +17,6 @@
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
 		<xsl:param name="defaultValue" select="''"/>
-
 		<xsl:value-of select="concat($prefix, normalize-space($value), $suffix, '&#xa;')"/>
 	</xsl:template>
 
@@ -81,7 +77,6 @@
 		<xsl:param name="elem"/>
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
-
 		<xsl:if test="$elem[1]">
 			<xsl:variable name="lineJoin">
 				<xsl:choose>
@@ -91,7 +86,6 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
-
 			<xsl:call-template name="outputValue">
 				<xsl:with-param name="value" select="$lineJoin"/>
 				<xsl:with-param name="prefix" select="$prefix"/>
@@ -104,7 +98,6 @@
 		<xsl:param name="elem"/>
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
-
 		<xsl:if test="$elem[1]">
 			<xsl:call-template name="outputValue">
 				<xsl:with-param name="value" select="100 * $elem[1]/text()"/>
@@ -118,7 +111,6 @@
 		<xsl:param name="elem"/>
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
-
 		<xsl:if test="$elem[1]">
 			<xsl:variable name="family" select="$elem[1]/sld:CssParameter[@name='font-family']/text()"/>
 			<xsl:variable name="weight" select="$elem[1]/sld:CssParameter[@name='font-weight']/text()"/>
@@ -193,7 +185,7 @@
 
 	<xsl:template name="outputStroke">
 		<xsl:param name="outlinePrefix" select="''"/>
-		
+
 		<xsl:choose>
 			<xsl:when test="sld:Stroke/sld:CssParameter[@name='stroke']">
 				<xsl:call-template name="outputElemValueWithQuotes">
@@ -204,12 +196,12 @@
 		</xsl:choose>
 
 		<xsl:variable name="msStrokeWidth">
-			 <xsl:variable name="strokeWidth" select="number(sld:Stroke/sld:CssParameter[@name='stroke-width'])"/>
-			 <xsl:choose>
+			<xsl:variable name="strokeWidth" select="number(sld:Stroke/sld:CssParameter[@name='stroke-width'])"/>
+			<xsl:choose>
 				<xsl:when test="number($strokeWidth) &lt; number(0.75)">
 					<xsl:value-of select="number(0.5)" />
 				</xsl:when>
-				<xsl:otherwise>					
+				<xsl:otherwise>
 					<xsl:value-of select="$strokeWidth" />
 				</xsl:otherwise>
 			</xsl:choose>
@@ -300,7 +292,6 @@
 			</xsl:for-each>
 			<xsl:text>    END&#xa;</xsl:text>
 		</xsl:if>
-
 	</xsl:template>	<!-- outputClasses-->
 
 	<xsl:template name="outputClassesBin">
@@ -402,9 +393,6 @@
 		</xsl:for-each>
 
 		<xsl:for-each select="$currentRule/sld:PointSymbolizer">
-
-
-
 			<xsl:for-each select="sld:Graphic/sld:Mark">
 				<xsl:text>      STYLE&#xa;</xsl:text>
 
@@ -415,16 +403,13 @@
 					</xsl:call-template>
 				</xsl:if>
 
-
-
-
-
 				<xsl:variable name="chapNum">
 					<xsl:number level="any"/>
 				</xsl:variable>
 
 				<!-- Symbol properties -->
-				<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
+				<!-- The content of this symbol is being exported by symbol_<version>.xslt -->
+
 				<xsl:call-template name="outputElemValue">
 					<xsl:with-param name="elem" select="../../../../../sld:Title"/>
 					<xsl:with-param name="prefix" select="'        SYMBOL &quot;'"/>
@@ -497,16 +482,7 @@
 				<xsl:text>        STYLE&#xa;</xsl:text>
 
 				<!-- Symbol properties -->
-				<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
-				<!--xsl:call-template name="outputElemValue">
-							<xsl:with-param name="elem" select="../../../../../sld:Title"/>
-							<xsl:with-param name="prefix" select="'          SYMBOL &quot;'"/>
-							<xsl:with-param name="suffix" select="concat('-', position(), '&quot;')"/>
-						</xsl:call-template>
-						<xsl:call-template name="outputElemValue">
-							<xsl:with-param name="elem" select="../sld:Size"/>
-							<xsl:with-param name="prefix" select="'          SIZE '"/>
-						</xsl:call-template-->
+				<!-- The content of this symbol is being exported by symbol_<version>.xslt -->
 
 				<xsl:text>          GEOMTRANSFORM labelpoly&#xa;</xsl:text>
 
@@ -589,7 +565,7 @@
 			<xsl:with-param name="elem" select="$styleName"/>
 			<xsl:with-param name="prefix" select="'    CLASSGROUP '"/>
 		</xsl:call-template>
-	
+
 		<xsl:if test="//ogc:Filter/ogc:And|//ogc:Filter/ogc:PropertyIsBetween|//ogc:Filter/ogc:PropertyIsGreaterThanOrEqualTo">
 			<xsl:for-each select="//ogc:Filter">
 				<xsl:call-template name="filter">
@@ -628,8 +604,5 @@
 			</xsl:call-template>
 		</xsl:for-each>
 		<xsl:text>    END&#xa;</xsl:text>
-
 	</xsl:template>
-
-
 </xsl:stylesheet>

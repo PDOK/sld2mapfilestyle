@@ -1,38 +1,75 @@
-# Mapserver SLD Converter
+# sld2mapfilestyle
 
-Met dit project kan een set SLD-bestanden worden omgezet naar een Mapserver-configuratie, maar enkel de style informatie. 
+A commandline tool to convert Styled Layer Descriptor (SLD) files to MapServer Mapfile style definitions.
 
-* Python 3.6
-* lxml
+## SLD support
 
+At this time sld2mapfilestyle does not support the full SLD specification. Both SLD 1.0.0 and 1.1.0 are suppported, although support for version 1.1.0 is not as extented as version 1.0.0. Not all filters that are supported in 1.0.0 are supported in 1.1.0.
 
-## Install with pip3
+## Requirements
 
-Uitvoeren in root van project directory:
+- Python >=3.6
+- lxml
+
+## Installation
+
+Clone this repository and execute on the commandline (replace `<path to sld2mapfilestyle>` with the actual path to the project root):
+
+```bash
+pip3 install <path to sld2mapfilestyle>
+```
+
+## Usage
+
+Use the cli tool by invoking `sld2mapfilestyle` on the command line:
+
+```bash
+sld2mapfilestyle --help
+usage: sld2mapfilestyle [-h] [--silent SILENT] sld_file output_dir
+
+positional arguments:
+  sld_file         path to sld file to convert
+  output_dir       directory to save output files
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --silent SILENT  do not print output to stdout
+```
+
+Running `sld2mapfilestyle` will generate a `<name>.style` file and `<name>.symbol` file (if the style contains a markersymbol). These files can be included in MapServer Mapfile using `INCLUDE` like so:
 
 ```
-pip3 install .
-```
-Dan uitvoeren:
-
-```
-convert-sld <path-to-sld> <destination-dir>
+INCLUDE  <name>.style
 ```
 
-## Debug in VS Code
+## Development
+
+### Setup debugger VS Code
 
 Add this launch configuration to `.vscode/launch.json`:
 
-```
- {
-    "name": "convert-sld-command",
+```json
+{
+    "name": "sld2mapfilestyle",
     "type": "python",
     "request": "launch",
-    "module": "sld2mapfilestyle.sld2mapfilestyle",
+    "module": "sld2mapfilestyle.main",
     "args": [
-        "convert-sld",
-        "tests/sld/cbs_inwoners/cbs_pc4_aantal_inwoners.sld",
+        "sld/some-sld.sld",
         "data/"
     ]
 }
 ```
+
+### Unittests
+
+Run unit tests with:
+
+```bash
+python3 -m unittest discover ./test "test_*.py"
+```
+
+## Contributors
+
+- [arbakker](https://github.com/arbakker)
+- [fsteggink](https://github.com/fsteggink)

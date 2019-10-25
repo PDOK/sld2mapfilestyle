@@ -1,5 +1,5 @@
 import unittest
-from sld2mapfilestyle.sld2mapfilestyle import get_style_string
+from sld2mapfilestyle.main import get_style_string
 
 class TestStyle(unittest.TestCase):
 

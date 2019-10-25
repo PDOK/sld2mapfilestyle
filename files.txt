@@ -1,7 +1,0 @@
-C:\Users\bakkea\AppData\Local\Programs\Python\Python37-32\Lib\site-packages\sld2mapfilestyle\sld2mapfilestyle.py
-C:\Users\bakkea\AppData\Local\Programs\Python\Python37-32\Lib\site-packages\sld2mapfilestyle\stringbuilder.py
-C:\Users\bakkea\AppData\Local\Programs\Python\Python37-32\Lib\site-packages\sld2mapfilestyle\__init__.py
-C:\Users\bakkea\AppData\Local\Programs\Python\Python37-32\Lib\site-packages\sld2mapfilestyle\__pycache__\sld2mapfilestyle.cpython-37.pyc
-C:\Users\bakkea\AppData\Local\Programs\Python\Python37-32\Lib\site-packages\sld2mapfilestyle\__pycache__\stringbuilder.cpython-37.pyc
-C:\Users\bakkea\AppData\Local\Programs\Python\Python37-32\Lib\site-packages\sld2mapfilestyle\__pycache__\__init__.cpython-37.pyc
-C:\Users\bakkea\AppData\Local\Programs\Python\Python37-32\Lib\site-packages\sld2mapfilestyle-0.1-py3.7.egg-info

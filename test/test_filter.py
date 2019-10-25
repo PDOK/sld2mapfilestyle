@@ -1,9 +1,11 @@
 import unittest
-from sld2mapfilestyle.sld2mapfilestyle import get_style_string
+from sld2mapfilestyle.main import get_style_string
 
 class TestFilter(unittest.TestCase):
 
     def test_filter_property_is_between(self):
+        """[summary]
+        """
         style_string = get_style_string("test/sld/filter/property_is_between_1.0.0.sld")
         self.assertIn("EXPRESSION ([basisonderwijs_aantal_binnen_1_km] ge 0.0 AND [basisonderwijs_aantal_binnen_1_km] le 0.05)", style_string)
         self.assertIn("EXPRESSION ([basisonderwijs_aantal_binnen_1_km] ge 0.050001 AND [basisonderwijs_aantal_binnen_1_km] le 1.4)", style_string)
@@ -20,15 +22,6 @@ class TestFilter(unittest.TestCase):
         self.assertIn("EXPRESSION ([aantal_personen_met_uitkering_onder_aowlft] ge 249.000001 AND [aantal_personen_met_uitkering_onder_aowlft] lt 499.0)", style_string)
         self.assertIn("EXPRESSION ([aantal_personen_met_uitkering_onder_aowlft] ge 499.000001 AND [aantal_personen_met_uitkering_onder_aowlft] lt 999.0)", style_string)
         self.assertIn("EXPRESSION ([aantal_personen_met_uitkering_onder_aowlft] ge 999.000001)", style_string)
-
-    def test_filter_property_is_equal_to_2(self):
-        style_string = get_style_string("test/sld/filter/property_is_equal_to_1.0.0_2.sld")
-        self.assertIn("EXPRESSION \"16540\"", style_string)
-        self.assertIn("EXPRESSION \"11080\"", style_string)
-        self.assertIn("EXPRESSION \"11070\"", style_string)
-        self.assertIn("EXPRESSION \"11030\"", style_string)
-        self.assertIn("EXPRESSION \"11002\"", style_string)
-        self.assertIn("EXPRESSION \"11000\"", style_string)
 
     def test_filter_property_is_equal_to(self):
         style_string = get_style_string("test/sld/filter/property_is_equal_to_1.0.0.sld")

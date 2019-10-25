@@ -61,12 +61,9 @@
 			<xsl:with-param name="value" select="$name"/>
 			<xsl:with-param name="prefix" select="$prefix"/>
 			<xsl:with-param name="suffix" select="$suffix"/>
-		</xsl:call-template>
-	
+		</xsl:call-template>	
 	</xsl:template>
 
-
-	
 	<xsl:template name="outputElemValueWithQuotes">
 		<xsl:param name="elem"/>
 		<xsl:param name="prefix"/>

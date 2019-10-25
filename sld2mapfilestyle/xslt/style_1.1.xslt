@@ -321,7 +321,7 @@
 						<xsl:text>      STYLE&#xa;</xsl:text>
 						
 						<!-- Symbol properties -->
-						<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
+						<!-- The content of this symbol is being exported by symbol_<version>.xslt -->
 						<xsl:variable name="layername" select="/sld:StyledLayerDescriptor/sld:NamedLayer/se:Name/text()"/>
 						<xsl:variable name="symbolname" select="../../../se:Name/text()"/>
 						<xsl:call-template name="outputElemValueSymbol">
@@ -396,17 +396,7 @@
 						<xsl:text>        STYLE&#xa;</xsl:text>
 						
 						<!-- Symbol properties -->
-						<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
-						<!--xsl:call-template name="outputElemValue">
-							<xsl:with-param name="elem" select="../../../../../sld:Title"/>
-							<xsl:with-param name="prefix" select="'          SYMBOL &quot;'"/>
-							<xsl:with-param name="suffix" select="concat('-', position(), '&quot;')"/>
-						</xsl:call-template>
-						<xsl:call-template name="outputElemValue">
-							<xsl:with-param name="elem" select="../sld:Size"/>
-							<xsl:with-param name="prefix" select="'          SIZE '"/>
-						</xsl:call-template-->
-						
+						<!-- The content of this symbol is being exported by symbol_<version>.xslt -->
 						<xsl:text>          GEOMTRANSFORM labelpoly&#xa;</xsl:text>
 						
 						<!-- Fill and stroke -->
@@ -447,7 +437,7 @@
 				</xsl:call-template>
 			</xsl:for-each>
 		</xsl:if>
-		
+
 		<xsl:if test="not(//ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal)">
 			<!-- No filters testing for equality, for example BRTA gebouwVlak_9_14 -->
 			<xsl:call-template name="outputClasses">
@@ -455,7 +445,6 @@
 				<xsl:with-param name="rules" select="//se:Rule[ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal/text()]"/>
 			</xsl:call-template>	
 		</xsl:if>
-		
 
 		<xsl:if test="not(//ogc:Filter)">
 			<xsl:variable name="rules" select="//se:Rule"/>
@@ -465,9 +454,5 @@
 			</xsl:call-template>
 		</xsl:if> 
 		
-
-
-
 	</xsl:template>
-
 </xsl:stylesheet>
