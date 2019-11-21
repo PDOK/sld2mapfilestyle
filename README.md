@@ -15,7 +15,7 @@ At this time sld2mapfilestyle does not support the full SLD specification. Both 
 
 Clone this repository and execute on the commandline (replace `<path to sld2mapfilestyle>` with the actual path to the project root):
 
-```bash
+```
 pip3 install <path to sld2mapfilestyle>
 ```
 
@@ -23,7 +23,7 @@ pip3 install <path to sld2mapfilestyle>
 
 Use the cli tool by invoking `sld2mapfilestyle` on the command line:
 
-```bash
+```
 sld2mapfilestyle --help
 usage: sld2mapfilestyle [-h] [--silent SILENT] sld_file output_dir
 
