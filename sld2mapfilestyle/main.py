@@ -29,7 +29,9 @@ def _execute_xslt(xslt_type, sld_filename):
             message = f"Error occured while applying xsl tranformation file \
                 {xsl_path} on {sld_filename}"
             for error in transform.error_log:
-                message += error.message, error.line
+                line_nr = error.line
+                mess = error.message
+                message += f"{line_nr}: {mess}"
             raise Exception(message)
         else:
             raise e
@@ -54,6 +56,7 @@ def _convert_sld_cli(sld_file, output_dir, silent=True):
         style_string = get_style_string(sld_file)
         symbol_string = get_symbol_string(sld_file)
     except Exception as e:
+        raise e
         if not silent:
             print("error occured during transforming sld: " + str(e))
         exit(1)
@@ -83,3 +86,6 @@ def _cli():
     sld_file = args.sld_file
     output_dir = args.output_dir
     _convert_sld_cli(sld_file, output_dir, silent)
+
+if __name__ == "__main__":
+    _cli()

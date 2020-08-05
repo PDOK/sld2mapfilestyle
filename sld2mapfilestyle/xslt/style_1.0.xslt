@@ -8,6 +8,7 @@
 	<xsl:output method="text"/>
 	<xsl:strip-space elements="*"/>
 
+
 	<xsl:key name="minScale" match="//sld:MinScaleDenominator/text()" use="." />
 	<xsl:key name="filterValue" match="//ogc:Filter/ogc:PropertyIsEqualTo/ogc:Literal/text()" use="." />
 	<xsl:variable name="apos">'</xsl:variable>
@@ -342,19 +343,61 @@
 			<xsl:with-param name="elem" select="$styleName"/>
 			<xsl:with-param name="prefix" select="'      GROUP '"/>
 		</xsl:call-template>
-
-		<xsl:call-template name="symbolizers">
-			<xsl:with-param name="currentRule" select="$currentRule"/>
-		</xsl:call-template>
-
 		<xsl:for-each select="$commonRules">
 			<xsl:variable name="currentRule" select="."/>
 			<xsl:call-template name="symbolizers">
 				<xsl:with-param name="currentRule" select="$currentRule"/>
 			</xsl:call-template>
 		</xsl:for-each>
+
+		<xsl:call-template name="symbolizers">
+			<xsl:with-param name="currentRule" select="$currentRule"/>
+		</xsl:call-template>
+
+		
 		<xsl:text>    END&#xa;</xsl:text>
 	</xsl:template>	<!-- outputClassesBin-->
+
+	<xsl:template name="lowestBin">
+		<xsl:param name="currentRule"/>
+		<xsl:param name="styleName"/>
+		<xsl:param name="className"/>
+		<xsl:param name="upperValue"/>
+		<xsl:param name="upperProperty"/>
+		<xsl:param name="upperOp"/>
+
+
+		<xsl:text>    CLASS&#xa;</xsl:text>
+		<!-- Use the name of the first rule -->
+		<xsl:call-template name="outputElemValueWithQuotes">
+			<xsl:with-param name="elem" select="$className"/>
+			<xsl:with-param name="prefix" select="'      NAME '"/>
+		</xsl:call-template>
+		<xsl:call-template name="outputElemValueWithQuotes">
+				<xsl:with-param name="elem" select="$styleName"/>
+				<xsl:with-param name="prefix" select="'      GROUP '"/>
+			</xsl:call-template>
+
+		<xsl:choose>
+			<xsl:when test="$upperProperty">
+				<xsl:call-template name="outputValue">
+					<xsl:with-param name="value" select="concat('(','[', $upperProperty, ']', ' ', $upperOp,' ', $upperValue, ')')"/>
+					<xsl:with-param name="prefix" select="'      EXPRESSION '"/>
+				</xsl:call-template>
+			</xsl:when>
+		</xsl:choose>
+
+		<xsl:call-template name="symbolizers">
+			<xsl:with-param name="currentRule" select="$currentRule"/>
+		</xsl:call-template>
+		<!-- <xsl:for-each select="$commonRules">
+			<xsl:variable name="currentRule" select="."/>
+			<xsl:call-template name="symbolizers">
+				<xsl:with-param name="currentRule" select="$currentRule"/>
+			</xsl:call-template>
+		</xsl:for-each> -->
+		<xsl:text>    END&#xa;</xsl:text>
+	</xsl:template>	<!-- lowestBin-->
 
 	<xsl:template name="symbolizers">
 		<xsl:param name="currentRule"/>
@@ -511,6 +554,7 @@
 		<xsl:param name="className"/>
 		<xsl:param name="commonRules"/>
 
+
 		<xsl:if test="ogc:And/ogc:PropertyIsGreaterThanOrEqualTo|ogc:And/ogc:PropertyIsLessThan">
 			<xsl:call-template name="outputClassesBin">
 				<xsl:with-param name="currentRule" select="$currentRule"/>
@@ -566,6 +610,69 @@
 			<xsl:with-param name="prefix" select="'    CLASSGROUP '"/>
 		</xsl:call-template>
 
+
+		<xsl:for-each select="//sld:Rule[not(ogc:Filter)]">
+
+			<xsl:variable name="property">
+				<xsl:for-each select="//sld:Rule[descendant::ogc:Filter]">
+					<xsl:sort select="number(./ogc:Filter//ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal/text())" data-type="number" order="ascending" lang="eng"/>
+					<xsl:if test="position() = 1">
+						<xsl:value-of select="./ogc:Filter//ogc:PropertyIsGreaterThanOrEqualTo/ogc:PropertyName" />
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:variable>
+
+
+			<!-- <xsl:for-each select="//sld:Rule[descendant::ogc:Filter]">					
+				<xsl:sort select="number(./ogc:Filter//ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal/text())" data-type="number" order="ascending" lang="eng"/>
+				<xsl:call-template name="outputElemValue">
+					<xsl:with-param name="elem" select="./sld:Title"/>
+					<xsl:with-param name="prefix" select="'      TITLE '"/>
+				</xsl:call-template>
+				<xsl:call-template name="outputElemValue">
+					<xsl:with-param name="elem" select="./ogc:Filter//ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal"/>
+					<xsl:with-param name="prefix" select="'      VALUE '"/>
+				</xsl:call-template>
+			</xsl:for-each> -->
+
+
+			<xsl:variable name="least">
+				<xsl:for-each select="//sld:Rule[descendant::ogc:Filter]">
+					<xsl:sort select="number(./ogc:Filter//ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal/text())" data-type="number" order="ascending" lang="eng"/>
+					<xsl:if test="position() = 1">
+						<xsl:value-of select="./ogc:Filter//ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal" />
+					</xsl:if>
+				</xsl:for-each>
+			</xsl:variable>
+
+			<xsl:variable name="currentRule" select="."/>
+			<xsl:variable name="className" select="./sld:Title"/>
+
+			
+
+			<xsl:call-template name="lowestBin">
+				<xsl:with-param name="currentRule" select="$currentRule"/>
+				<xsl:with-param name="styleName" select="$styleName"/>
+				<xsl:with-param name="className" select="$className"/>
+				<xsl:with-param name="upperValue" select="$least"/>
+				<xsl:with-param name="upperProperty" select="$property"/>
+				<xsl:with-param name="upperOp" select="'lt'"/>
+			</xsl:call-template>
+
+
+			<!-- <xsl:text>    CLASS&#xa;</xsl:text>
+			<xsl:call-template name="outputElemValueWithQuotes">
+				<xsl:with-param name="elem" select="$styleName"/>
+				<xsl:with-param name="prefix" select="'      GROUP '"/>
+			</xsl:call-template>
+
+			<xsl:call-template name="symbolizers">
+				<xsl:with-param name="currentRule" select="$currentRule"/>
+			</xsl:call-template>
+			<xsl:text>    END&#xa;</xsl:text> -->
+		</xsl:for-each>
+
+
 		<xsl:if test="//ogc:Filter/ogc:And|//ogc:Filter/ogc:PropertyIsBetween|//ogc:Filter/ogc:PropertyIsGreaterThanOrEqualTo">
 			<xsl:for-each select="//ogc:Filter">
 				<xsl:call-template name="filter">
@@ -591,18 +698,17 @@
 		</xsl:if>
 
 		<!-- Add class with common rules, so that unmatched features (not falling in any of the classes), get styled by the common rules as well -->
-		<xsl:text>    CLASS&#xa;</xsl:text>
+		<!-- <xsl:text>    CLASS&#xa;</xsl:text>
 		<xsl:call-template name="outputElemValueWithQuotes">
 			<xsl:with-param name="elem" select="$styleName"/>
 			<xsl:with-param name="prefix" select="'      GROUP '"/>
-		</xsl:call-template>
+		</xsl:call-template> -->
 
-		<xsl:for-each select="//sld:Rule[not(ogc:Filter)]">
-			<xsl:variable name="currentRule" select="."/>
-			<xsl:call-template name="symbolizers">
-				<xsl:with-param name="currentRule" select="$currentRule"/>
-			</xsl:call-template>
-		</xsl:for-each>
-		<xsl:text>    END&#xa;</xsl:text>
+
+		
+
+		
+
+
 	</xsl:template>
 </xsl:stylesheet>
