@@ -1,3 +1,5 @@
+Deze repo is verplaatst vanaf http://github.so.kadaster.nl/PDOK/mapserver-sld-converter
+
 # Mapserver SLD Converter
 
 Met dit project kan een set SLD-bestanden worden omgezet naar een Mapserver-configuratie. Mapserver ondersteunt wel SLD's, maar alleen als onderdeel van de WMS-standaard, waarbij een SLD-bestand meegegeven kan worden aan een GetMap-request. Voor het direct configureren ben je nog steeds aangewezen op een standaard [Mapfile](http://www.mapserver.org/mapfile/). Voor uitleg over de Mapfile wordt verwezen naar de documentatie hierover. Voor algemene informatie over Mapserver wordt verwezen naar [architectuur-info](http://github.so.kadaster.nl/PDOK/architectuur-info/tree/master/mapserver).
