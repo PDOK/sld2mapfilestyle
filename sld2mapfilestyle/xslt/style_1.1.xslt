@@ -263,7 +263,7 @@
 
 			<!-- Use the name of the first rule -->
 			<xsl:call-template name="outputElemValueWithQuotes">
-				<xsl:with-param name="elem" select="$rules[1]/sld:Name"/>
+				<xsl:with-param name="elem" select="$rules[1]/se:Name"/>
 				<xsl:with-param name="prefix" select="'      NAME '"/>
 			</xsl:call-template>
 			
