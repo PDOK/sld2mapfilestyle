@@ -1,23 +1,75 @@
-Deze repo is verplaatst vanaf http://github.so.kadaster.nl/PDOK/mapserver-sld-converter
+# sld2mapfilestyle
 
-# Mapserver SLD Converter
+A commandline tool to convert Styled Layer Descriptor (SLD) files to MapServer Mapfile style definitions.
 
-Met dit project kan een set SLD-bestanden worden omgezet naar een Mapserver-configuratie. Mapserver ondersteunt wel SLD's, maar alleen als onderdeel van de WMS-standaard, waarbij een SLD-bestand meegegeven kan worden aan een GetMap-request. Voor het direct configureren ben je nog steeds aangewezen op een standaard [Mapfile](http://www.mapserver.org/mapfile/). Voor uitleg over de Mapfile wordt verwezen naar de documentatie hierover. Voor algemene informatie over Mapserver wordt verwezen naar [architectuur-info](http://github.so.kadaster.nl/PDOK/architectuur-info/tree/master/mapserver).
+## SLD support
 
-Met het Python-script kan een directory met SLD's a.d.h.v. een metabestand (CSV) worden omgezet naar een Mapfile. Benodigdheden:
+At this time sld2mapfilestyle does not support the full SLD specification. Both SLD 1.0.0 and 1.1.0 are suppported, although support for version 1.1.0 is not as extented as version 1.0.0. Not all filters that are supported in 1.0.0 are supported in 1.1.0.
 
-* [Python 2.7](https://www.python.org/downloads/windows/)
-* [lxml](http://lxml.de/installation.html) -> voor Windows zie (buiten proxy): https://www.lfd.uci.edu/~gohlke/pythonlibs/
+## Requirements
 
-Aanroep: `python sld2basemap.py <CSV-file> <SLD-dir> [<Title>]`
+- Python >=3.6
+- lxml
 
-Parameters:
-* CSV-file: bestand met meta-informatie. Het CSV-bestand bevat 3 of 4 kolommen met de naam van het Geopackage-bestand, de laagnaam en de naam van het stijlbestand. De optionele 4e kolom bevat het geometrietype (point, line, area). Ieder record wordt omgezet naar één laag in de Mapfile. Wanneer er slechts 3 kolommen zijn opgegeven, wordt het geometrietype bepaald a.d.h.v. het voorkomen van de string `lijn` of `vlak` in de laagnaam.
-* SLD-dir: naam van de directory waar de SLD-bestanden staan.
-* Title: naam van de titel van de Mapserver-instantie (optioneel).
+## Installation
 
-Met de Python-code wordt de Mapfile gemaakt. Er wordt gebruik gemaakt van een tweetal XSLT's om onderdelen van de stijl te genereren. Er is hiervoor gekozen, omdat de SLD's een complexe structuur hebben en het zelf parsen hiervan veel werk zou zijn.
+Clone this repository and execute on the commandline (replace `<path to sld2mapfilestyle>` with the actual path to the project root):
 
-De conversie-applicatie is een work in progress. Het doel is uiteindelijk om het omzetten van de Geoserver-configuratie (met name de stijlen) naar Mapserver te vergemakkelijken. Gebruiksvriendelijkheid was nooit een doel op zich <img src="https://emojipedia-us.s3.amazonaws.com/thumbs/120/apple/118/smiling-face-with-halo_1f607.png" width="16" height="16">.
+```
+pip3 install <path to sld2mapfilestyle>
+```
 
-In de voorbeelden-directory is een aantal voorbeelden te zien van de BRT Achtergrondkaart, CBS Gebiedsindelingen en NWB wegen. Alleen NWB Wegen wordt momenteel in productie geserveerd via Mapserver. Per dataset is de directory met SLD's te zien (gekopieerd vanuit de Geoserver-configuratie), het CSV-bestand met meta-informatie en de uiteindelijke Mapfile.
+## Usage
+
+Use the cli tool by invoking `sld2mapfilestyle` on the command line:
+
+```
+sld2mapfilestyle --help
+usage: sld2mapfilestyle [-h] [--silent SILENT] sld_file output_dir
+
+positional arguments:
+  sld_file         path to sld file to convert
+  output_dir       directory to save output files
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --silent SILENT  do not print output to stdout
+```
+
+Running `sld2mapfilestyle` will generate a `<name>.style` file and `<name>.symbol` file (if the style contains a markersymbol). These files can be included in MapServer Mapfile using `INCLUDE` like so:
+
+```
+INCLUDE  <name>.style
+```
+
+## Development
+
+### Setup debugger VS Code
+
+Add this launch configuration to `.vscode/launch.json`:
+
+```json
+{
+    "name": "sld2mapfilestyle",
+    "type": "python",
+    "request": "launch",
+    "module": "sld2mapfilestyle.main",
+    "args": [
+        "sld/some-sld.sld",
+        "data/"
+    ]
+}
+```
+
+### Unittests
+
+Run unit tests with:
+
+```bash
+python3 -m unittest discover ./test "test_*.py"
+```
+
+## Contributors
+
+- [arbakker](https://github.com/arbakker)
+- [fsteggink](https://github.com/fsteggink)
