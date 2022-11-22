@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0" 
-	xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:sld="http://www.opengis.net/sld" 
-	xmlns:ogc="http://www.opengis.net/ogc" 
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:sld="http://www.opengis.net/sld"
+	xmlns:ogc="http://www.opengis.net/ogc"
 	xmlns:gml="http://www.opengis.net/gml">
 	<xsl:output method="text"/>
 	<xsl:strip-space elements="*"/>
@@ -354,7 +354,7 @@
 			<xsl:with-param name="currentRule" select="$currentRule"/>
 		</xsl:call-template>
 
-		
+
 		<xsl:text>    END&#xa;</xsl:text>
 	</xsl:template>	<!-- outputClassesBin-->
 
@@ -436,7 +436,7 @@
 		</xsl:for-each>
 
 		<xsl:for-each select="$currentRule/sld:PointSymbolizer">
-			<xsl:for-each select="sld:Graphic/sld:Mark">
+			<xsl:for-each select="sld:Graphic/sld:Mark|sld:Graphic/sld:ExternalGraphic">
 				<xsl:text>      STYLE&#xa;</xsl:text>
 
 				<xsl:if test="../../sld:Geometry/ogc:Function[@name = 'centroid']">
@@ -457,12 +457,13 @@
 					<xsl:with-param name="elem" select="../../../../../sld:Title"/>
 					<xsl:with-param name="prefix" select="'        SYMBOL &quot;'"/>
 					<xsl:with-param name="suffix" select="concat('-', $chapNum, '&quot;')"/>
-
 				</xsl:call-template>
-				<xsl:call-template name="outputValue">
-					<xsl:with-param name="value" select="number(../sld:Size) div 1.25"/>
-					<xsl:with-param name="prefix" select="'        SIZE '"/>
-				</xsl:call-template>
+				<xsl:if test="string(number(../sld:Size)) != 'NaN'">
+					<xsl:call-template name="outputValue">
+						<xsl:with-param name="value" select="number(../sld:Size) div 1.25"/>
+						<xsl:with-param name="prefix" select="'        SIZE '"/>
+					</xsl:call-template>
+				</xsl:if>
 
 				<!-- Fill and stroke -->
 				<xsl:call-template name="outputFill" />
@@ -623,7 +624,7 @@
 			</xsl:variable>
 
 
-			<!-- <xsl:for-each select="//sld:Rule[descendant::ogc:Filter]">					
+			<!-- <xsl:for-each select="//sld:Rule[descendant::ogc:Filter]">
 				<xsl:sort select="number(./ogc:Filter//ogc:PropertyIsGreaterThanOrEqualTo/ogc:Literal/text())" data-type="number" order="ascending" lang="eng"/>
 				<xsl:call-template name="outputElemValue">
 					<xsl:with-param name="elem" select="./sld:Title"/>
@@ -648,7 +649,7 @@
 			<xsl:variable name="currentRule" select="."/>
 			<xsl:variable name="className" select="./sld:Title"/>
 
-			
+
 
 			<xsl:call-template name="lowestBin">
 				<xsl:with-param name="currentRule" select="$currentRule"/>
@@ -705,9 +706,9 @@
 		</xsl:call-template> -->
 
 
-		
 
-		
+
+
 
 
 	</xsl:template>
