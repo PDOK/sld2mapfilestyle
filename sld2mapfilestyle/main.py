@@ -2,11 +2,15 @@ import os
 import argparse
 import lxml.etree as ET
 
+
 def _get_sld_version(xml_filename):
     dom = ET.parse(xml_filename)
-    sld_version = dom.xpath('/sld:StyledLayerDescriptor/@version', \
-        namespaces={"sld": "http://www.opengis.net/sld"})[0]
+    sld_version = dom.xpath(
+        "/sld:StyledLayerDescriptor/@version",
+        namespaces={"sld": "http://www.opengis.net/sld"},
+    )[0]
     return sld_version
+
 
 def _get_xslt_filename(xslt_type, sld_version):
     if sld_version == "1.1.0":
@@ -14,6 +18,7 @@ def _get_xslt_filename(xslt_type, sld_version):
     elif sld_version == "1.0.0":
         xslt_filename = "{0}_1.0.xslt".format(xslt_type)
     return xslt_filename
+
 
 def _execute_xslt(xslt_type, sld_filename):
     dom = ET.parse(sld_filename)
@@ -37,13 +42,16 @@ def _execute_xslt(xslt_type, sld_filename):
             raise e
     return str(newdom)
 
+
 def get_style_string(sld_file):
-    style_string = _execute_xslt('style', os.path.join(sld_file))
+    style_string = _execute_xslt("style", os.path.join(sld_file))
     return style_string
 
+
 def get_symbol_string(sld_file):
-    symbol_string = _execute_xslt('symbol', os.path.join(sld_file))
+    symbol_string = _execute_xslt("symbol", os.path.join(sld_file))
     return symbol_string
+
 
 def _get_output_filepath(sld_file, output_dir, ext):
     basenamepath = os.path.splitext(sld_file)[0]
@@ -51,19 +59,20 @@ def _get_output_filepath(sld_file, output_dir, ext):
     filepath = os.path.join(output_dir, "{0}{1}".format(basename, ext))
     return filepath
 
+
 def _convert_sld_cli(sld_file, output_dir, silent=True):
     try:
         style_string = get_style_string(sld_file)
         symbol_string = get_symbol_string(sld_file)
     except Exception as e:
-        raise e
         if not silent:
             print("error occured during transforming sld: " + str(e))
-        exit(1)
+            exit(1)
+        raise e
     if style_string:
         style_path = _get_output_filepath(sld_file, output_dir, ".style")
         output = os.path.abspath(style_path)
-        with open(output, 'w+') as file:
+        with open(output, "w+") as file:
             file.write(style_string)
             if not silent:
                 print("style saved in {0}".format(output))
@@ -71,10 +80,11 @@ def _convert_sld_cli(sld_file, output_dir, silent=True):
         outputdir = os.path.dirname(os.path.abspath(output))
         symbol_file = os.path.splitext(os.path.basename(output))[0]
         symbol_file = os.path.join(outputdir, "{0}.symbol".format(symbol_file))
-        with open(symbol_file, 'w+') as file:
+        with open(symbol_file, "w+") as file:
             file.write(symbol_string)
             if not silent:
                 print("symbol saved in {0}".format(symbol_file))
+
 
 def _cli():
     parser = argparse.ArgumentParser()
@@ -86,6 +96,7 @@ def _cli():
     sld_file = args.sld_file
     output_dir = args.output_dir
     _convert_sld_cli(sld_file, output_dir, silent)
+
 
 if __name__ == "__main__":
     _cli()
