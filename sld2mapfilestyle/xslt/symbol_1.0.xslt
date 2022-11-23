@@ -3,12 +3,8 @@
 		xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
 		xmlns:sld="http://www.opengis.net/sld"
 		xmlns:xlink="http://www.w3.org/1999/xlink">
-
-
-
     <xsl:output method="text"/>
     <xsl:strip-space elements="*"/>
-
 	<xsl:template name="substringAfterLast">
 		<xsl:param name="string" />
 		<xsl:param name="delimiter" />
@@ -24,32 +20,26 @@
 					select="$string" /></xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
-
 	<xsl:template name="outputValue">
 		<xsl:param name="value"/>
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
-
 		<xsl:value-of select="concat($prefix, $value, $suffix, '&#xa;')"/>
 	</xsl:template>
-
 	<xsl:template name="outputValueWithQuotes">
 		<xsl:param name="value"/>
 		<xsl:param name="prefix"/>
-
 		<xsl:call-template name="outputValue">
 			<xsl:with-param name="value" select="$value"/>
 			<xsl:with-param name="prefix" select="concat($prefix, '&quot;')"/>
 			<xsl:with-param name="suffix" select="'&quot;'"/>
 		</xsl:call-template>
 	</xsl:template>
-
 	<xsl:template name="outputElemValue">
 		<xsl:param name="elem"/>
 		<xsl:param name="prefix"/>
 		<xsl:param name="suffix" select="''"/>
 		<xsl:param name="defaultValue"/>
-
 		<xsl:if test="$elem[1]">
 			<xsl:call-template name="outputValue">
 				<xsl:with-param name="value" select="$elem[1]/text()"/>
@@ -57,7 +47,6 @@
 				<xsl:with-param name="suffix" select="$suffix"/>
 			</xsl:call-template>
 		</xsl:if>
-
 		<xsl:if test="not($elem[1]) and $defaultValue">
 			<xsl:call-template name="outputValue">
 				<xsl:with-param name="value" select="$defaultValue"/>
@@ -66,41 +55,34 @@
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
-
 	<xsl:template name="outputElemValueWithQuotes">
 		<xsl:param name="elem"/>
 		<xsl:param name="prefix"/>
-
 		<xsl:call-template name="outputElemValue">
 			<xsl:with-param name="elem" select="$elem"/>
 			<xsl:with-param name="prefix" select="concat($prefix, '&quot;')"/>
 			<xsl:with-param name="suffix" select="'&quot;'"/>
 		</xsl:call-template>
 	</xsl:template>
-
 	<xsl:template name="outputReference">
 		<xsl:param name="elem"/>
 		<xsl:param name="refPrefix"/>
 		<xsl:param name="prefix"/>
-
 		<xsl:if test="$elem[1]">
 			<xsl:variable name="value" select="generate-id($elem[1])"/>
 			<xsl:value-of select="concat($prefix, '&quot;', $refPrefix, $value, '&quot;', '&#xa;')"/>
 		</xsl:if>
 	</xsl:template>
-
    	<!-- Start processing the templates -->
 	<xsl:template match="/sld:StyledLayerDescriptor">
 		<xsl:for-each select=".//sld:PointSymbolizer/sld:Graphic/sld:Mark|.//sld:TextSymbolizer/sld:Graphic/sld:Mark|.//sld:PointSymbolizer/sld:Graphic/sld:ExternalGraphic">
 			<xsl:text>  SYMBOL&#xa;</xsl:text>
-
 			<!-- The content of this symbol is being exported by sld2namedStyles.xslt -->
 			<xsl:call-template name="outputElemValue">
 				<xsl:with-param name="elem" select="../../../../../sld:Title"/>
 				<xsl:with-param name="prefix" select="'    NAME &quot;'"/>
 				<xsl:with-param name="suffix" select="concat('-', position(), '&quot;')"/>
 			</xsl:call-template>
-
 			<xsl:variable name="wkn" select="sld:WellKnownName/text()"/>
 			<xsl:choose>
 				<xsl:when test="$wkn = 'circle'">
@@ -137,7 +119,6 @@
 					<xsl:with-param name="delimiter" select="'/'" />
 				</xsl:call-template>
 			</xsl:variable>
-
 			<xsl:if test="$imagename != ''">
 				<xsl:call-template name="outputValueWithQuotes">
 					<xsl:with-param name="value" select="concat('/srv/data/images/',$imagename)"/>
@@ -160,5 +141,4 @@
 			<xsl:text>  END&#xa;</xsl:text>
 		</xsl:for-each>
 	</xsl:template>
-
 </xsl:stylesheet>
