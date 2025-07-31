@@ -2,6 +2,8 @@
 
 A commandline tool to convert Styled Layer Descriptor (SLD) files to MapServer Mapfile style definitions.
 
+This tool is not actively maintained. 
+
 ## SLD support
 
 At this time sld2mapfilestyle does not support the full SLD specification. Both SLD 1.0.0 and 1.1.0 are suppported, although support for version 1.1.0 is not as extented as version 1.0.0. Not all filters that are supported in 1.0.0 are supported in 1.1.0.
